@@ -31,3 +31,20 @@ jobs:
           release-type: node
           package-name: pedrohfreitas-front-lib # O nome do seu pacote Angular
           bump-minor-pre-major: true # Para garantir que versões minor serão geradas antes de um major release
+  merge:
+      runs-on: self-hosted
+
+      needs: release-please
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        - name: Auto-merge release PR
+          uses: peter-evans/merge-pull-request@v3
+          with:
+            pull-request: ${{ needs.release-please.outputs.pull-request-number }}
+            merge-method: squash  # Escolha o método de merge (merge, squash, rebase)
+            commit-message: "Auto-merge release PR"
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
