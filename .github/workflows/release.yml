@@ -20,7 +20,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Use a versão que seu projeto precisa
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
@@ -29,22 +29,22 @@ jobs:
         uses: google-github-actions/release-please-action@v4
         with:
           release-type: node
-          package-name: pedrohfreitas-front-lib # O nome do seu pacote Angular
-          bump-minor-pre-major: true # Para garantir que versões minor serão geradas antes de um major release
+          package-name: pedrohfreitas-front-lib
+          bump-minor-pre-major: true
+
   merge:
-      runs-on: self-hosted
+    runs-on: self-hosted
 
-      needs: release-please
+    needs: release-please
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-        - name: Auto-merge release PR
-          uses: peter-evans/merge-pull-request@v3
-          with:
-            pull-request: ${{ needs.release-please.outputs.pull-request-number }}
-            merge-method: squash  # Escolha o método de merge (merge, squash, rebase)
-            commit-message: "Auto-merge release PR"
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable Auto-merge for release PR
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          pull-request-number: ${{ needs.release-please.outputs.pull-request-number }}
+          merge-method: squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
